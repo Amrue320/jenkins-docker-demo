@@ -4,7 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = "jenkins-docker-demo"
         IMAGE_TAG = "latest"
-        DOCKER_USERNAME = "Amrue320"
+        DOCKER_USERNAME = "amru12345"
     }
 
     stages {
