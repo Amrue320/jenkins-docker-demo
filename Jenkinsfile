@@ -4,7 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = "jenkins-docker-demo"
         IMAGE_TAG = "latest"
-        DOCKER_REGISTRY = "docker.io"
+        DOCKER_USERNAME = "Amrue320"
     }
 
     stages {
@@ -48,19 +48,15 @@ pipeline {
                 echo 'Building Docker image...'
 
                 bat 'docker build -t %IMAGE_NAME%:%IMAGE_TAG% .'
+
+                bat 'docker tag %IMAGE_NAME%:%IMAGE_TAG% %DOCKER_USERNAME%/%IMAGE_NAME%:%IMAGE_TAG%'
             }
         }
 
         stage('Docker Push') {
             steps {
-                echo 'Docker image push stage.'
+                echo 'Logging into Docker Hub and pushing image...'
 
-                echo 'Docker Hub credentials will be configured in Jenkins.'
-
-                // After configuring Docker Hub credentials,
-                // uncomment the following section:
-
-                /*
                 withCredentials([
                     usernamePassword(
                         credentialsId: 'dockerhub-credentials',
@@ -69,13 +65,12 @@ pipeline {
                     )
                 ]) {
 
-                    bat 'docker login -u %DOCKER_USER% -p %DOCKER_PASS%'
+                    bat 'echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin'
 
-                    bat 'docker tag %IMAGE_NAME%:%IMAGE_TAG% %DOCKER_USER%/%IMAGE_NAME%:%IMAGE_TAG%'
+                    bat 'docker push %DOCKER_USERNAME%/%IMAGE_NAME%:%IMAGE_TAG%'
 
-                    bat 'docker push %DOCKER_USER%/%IMAGE_NAME%:%IMAGE_TAG%'
+                    bat 'docker logout'
                 }
-                */
             }
         }
     }
